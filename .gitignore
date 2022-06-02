@@ -1,32 +1,58 @@
-# Prerequisites
-*.d
+#include <Servo.h>
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+//servo motor için ayarlama
+Servo servoo;
+//Değişkenler
+int distance;
+int sure=400;
+void setup() {
+//Motor ayarı
+pinMode(2,OUTPUT);
+pinMode(3,OUTPUT);
+pinMode(9,OUTPUT);
+pinMode(10,OUTPUT);
+//Servo ayarı
+servoo.attach(8); 
 
-# Precompiled Headers
-*.gch
-*.pch
+//Seri monitör ayarı
+Serial.begin(9600);
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+}
 
-# Fortran module files
-*.mod
-*.smod
+void loop() {
+//Servo ayarı
+servoo.write(90);delay(350);
+ digitalWrite(10,0); digitalWrite(2,0);digitalWrite(9,0);digitalWrite(3,0); delay(5);//Motor durdur         
+//Distance değişkeni mesafe ile eşitlenir
+distance = analogRead(A0);
+//distance değişkeni 10-80 arasına küçültülür
+distance= map(distance,620,0,10,80);
+//Distance değişkeni seri mönitöre verilir
+Serial.print("mesafe: ");
+Serial.println(distance);
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+//Eğer engel yok ise düz gitsin
+digitalWrite(9,1); digitalWrite(3,1); delay(100); 
 
-# Executables
-*.exe
-*.out
-*.app
+
+//engel çıkar ise ne yapsın
+if(distance <= 35) {
+ digitalWrite(10,0); digitalWrite(2,0);digitalWrite(9,0); digitalWrite(3,0); delay(5);  //Motor durdur  
+servoo.write(0);  delay(500);
+distance = analogRead(A0);
+//distance değişkeni 10-80 arasına küçültülür
+distance= map(distance,620,0,10,80);
+if(distance <= 35){
+digitalWrite(10,0); digitalWrite(2,0);digitalWrite(9,0); digitalWrite(3,0); delay(5);  //Motor durdur  
+ digitalWrite(10,1); digitalWrite(3,1); delay(sure);  
+
+}else if (distance >= 35){
+  digitalWrite(10,0); digitalWrite(2,0);digitalWrite(9,0); digitalWrite(3,0); delay(5);  //Motor durdur  
+ digitalWrite(9,1); digitalWrite(2,1); delay(sure);  
+
+
+}
+ 
+}  
+
+} 
